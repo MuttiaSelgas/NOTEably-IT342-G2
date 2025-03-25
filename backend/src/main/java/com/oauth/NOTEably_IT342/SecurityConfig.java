@@ -18,10 +18,11 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
-            .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
-            //.formLogin(form -> form.defaultSuccessUrl("/hello",true));
-            .oauth2Login(oauth2 ->
-                oauth2.defaultSuccessUrl("/hello",true));
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/user-info").permitAll() // ✅ Allow frontend to call /user-info
+                .anyRequest().authenticated())
+            .oauth2Login(oauth2 -> oauth2.defaultSuccessUrl("http://localhost:8081/dashboard", true));
         return http.build();
     }
 }
+
